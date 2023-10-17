@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cooking and Delivery Dockets</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <script>
+    function downloadTableContentAsCSV(tableId, filename) {
+    const table = document.getElementById(tableId);
+    const rows = table.getElementsByTagName('tr');
+    let csvContent = 'data:text/csv;charset=utf-8,';
+
+    // Add table headers to the CSV content
+    const headers = rows[0].getElementsByTagName('th');
+    const headerData = [];
+    for (let i = 0; i < headers.length; i++) {
+        headerData.push('"' + headers[i].textContent.trim() + '"');
+    }
+    csvContent += headerData.join(',') + '\n';
+
+    for (let i = 1; i < rows.length; i++) {
+        const row = rows[i];
+        const cells = row.getElementsByTagName('td');
+        const rowData = [];
+
+        for (let j = 0; j < cells.length; j++) {
+            const cellContent = cells[j].textContent.trim();
+
+            // Handle nested data and add labels for clarity
+            if (cells[j].getElementsByTagName('ul').length) {
+                const listItems = cells[j].getElementsByTagName('li');
+                const nestedData = [];
+                for (let k = 0; k < listItems.length; k++) {
+                    nestedData.push(listItems[k].textContent.trim());
+                }
+                rowData.push('"' + nestedData.join(' | ') + '"');
+            } else {
+                rowData.push('"' + cellContent + '"');
+            }
+        }
+
+        csvContent += rowData.join(',') + '\n';
+    }
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', filename);
+    document.body.appendChild(link);
+    link.click();
+}
+
+</script>
+
+
+</head>
+<body>
+    <div class="dashboard-box">
+        <h1>Cooking and Delivery Dockets</h1>
+    </div>
+    <br><br>
+
+    <h2>Cooking Docket</h2>
+    <table border="1" id="cooking-table">
+        <tr>
+            <th>Date</th>
+            <th>Docket ID</th>
+            <th>Order Items</th>
+            <th>Status</th>
+        </tr>
+        <!-- Format and display the cooking docket data here -->
+        {% for docket in cooking_docket %}
+        <tr>
+            <td>{{ docket.date }}</td>
+            <td>{{ docket.docket_id }}</td>
+            <td>
+                <ul>
+                    {% for item in docket.order_items %}
+                    <li>{{ item.product_name }} (Quantity: {{ item.quantity }})</li>
+                    {% endfor %}
+                </ul>
+            </td>
+            <td>{{ docket.status }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <br><br>
+    <button onclick="downloadTableContentAsCSV('cooking-table', 'cooking_dockets.csv')">Download Cooking Dockets</button>
+
+    <br><br>
+
+    <h2>Delivery Docket</h2>
+    <table border="1" id="delivery-table">
+        <tr>
+            <th>Date</th>
+            <th>Docket ID</th>
+            <th>Customer Information</th>
+            <th>Driver Information</th>
+            <th>Order Total</th>
+            <th>Driver Commission</th>
+            <th>Grand Total</th>
+            <th>Status</th>
+        </tr>
+        <!-- Format and display the delivery docket data here -->
+        {% for docket in delivery_docket %}
+        <tr>
+            <td>{{ docket.date }}</td>
+            <td>{{ docket.docket_id }}</td>
+            <td>
+                <ul>
+                    <li>Name: {{ docket.customer_info.first_name }} {{ docket.customer_info.last_name }}</li>
+                    <li>Phone: {{ docket.customer_info.phone }}</li>
+                    <li>Address: {{ docket.customer_info.address }}</li>
+                    <li>Post Code: {{ docket.customer_info.post_code }}</li>
+                </ul>
+            </td>
+            <td>
+                <ul>
+                    <li>Name: {{ docket.driver_info.name }}</li>
+                    <li>Delivery Suburbs: {{ docket.driver_info.delivery_suburbs|join(', ') }}</li>
+                    <li>Commission Rate: {{ docket.driver_info.commission_rate }}%</li>
+                </ul>
+            </td>
+            <td>${{ docket.order_total|round(2) }}</td>
+            <td>${{ docket.driver_commission|round(2) }}</td>
+            <td>${{ docket.grand_total|round(2) }}</td>
+            <td>{{ docket.status }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <br><br>
+    <button onclick="downloadTableContentAsCSV('delivery-table', 'delivery_dockets.csv')">Download Delivery Dockets</button>
+   <br><br>
+    <a href="http://127.0.0.1:5000/transactions?date=">Back</a>
+
+</body>
+</html>

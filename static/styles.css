@@ -1,0 +1,61 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+h1 {
+    color: white;
+}
+
+h3 {
+    color: darkgreen;
+}
+
+label {
+    display: inline-block;
+    width: 120px;
+}
+
+button {
+    background-color: blue;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: darkblue;
+}
+
+table {
+    border-collapse: collapse;
+    border: 2px solid black;
+}
+
+th, td {
+    padding: 8px;
+    text-align: left;
+}
+th{
+    background-color: lightblue;
+}
+
+.bbutton{
+    width: 100%;
+    text-align :center;
+}
+
+form {
+    margin-bottom: 20px;
+    border: 1px solid grey;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.dashboard-box {
+  background-color: blue;
+  padding: 10px;
+  text-align: left;
+}

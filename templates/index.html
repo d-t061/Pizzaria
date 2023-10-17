@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joe's Pizzeria Dashboard</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <!-- Header Section -->
+    <div class="dashboard-box">
+        <h1>Dashboard</h1>
+    </div>
+    <h3>{{ message }}</h3>
+    <h4>Date: {{ date }}</h4>
+    <br><br>
+    <!-- Import Transactions Form -->
+    <form method="post">
+        <label for="day">Date:</label>
+        <input type="date" name="day" value="{{ date }}" required>
+        <button type="submit" name="action" value="import_transactions" style="margin-right: 50px;">Import Transactions</button>
+    </form>
+
+
+
+    <!-- Display Imported Transactions -->
+    {% if transactions %}
+    <h3>Orders Imported</h3>
+    <table border="1">
+        <tr>
+            <th>Order ID</th>
+            <th>Customer ID</th>
+            <th>Customer Name</th>
+            <th>Order Date</th>
+            <th>Order Items</th>
+        </tr>
+        {% for transaction in transactions %}
+        <tr>
+            <td>{{ transaction.order_id }}</td>
+            <td>{{ transaction.customer_info.customer_id }}</td>
+            <td>{{ transaction.customer_info.first_name }} {{ transaction.customer_info.last_name }}</td>
+            <td>{{ transaction.order_date }}</td>
+            <td>{{ transaction.order_items }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <!-- End of Imported Transactions Section -->
+    {% endif %}
+    <br><br><br><br><br>
+
+    <a href="{{ url_for('transactions', date=date) }}">
+        <button class="bbutton">View Transactions & generate EOD Summary</button>
+    </a>
+
+    <br><br>
+
+    <!-- In-Store Order Form -->
+    <form action="/order_form" method="get">
+        <button type="submit" value="Take In-Store Order" class="bbutton">Take In-Store Order</button>
+    </form>
+
+</body>
+</html>
